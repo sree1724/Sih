@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bank Signup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1f2a38, #3a6073, #1a3c52);
+      padding: 20px;
+    }
+
+    .container {
+      background: #1f1f2e;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      max-width: 400px;
+      width: 100%;
+      color: #fff;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #6c7ae0;
+      font-size: 1.8rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #cfd8dc;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: none;
+      border-radius: 10px;
+      background: #2a2c3f;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      background: #35375a;
+      box-shadow: 0 0 8px rgba(108, 122, 224, 0.6);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #6c7ae0;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn:hover {
+      background: #5a68d1;
+      transform: translateY(-2px);
+    }
+
+    .message {
+      padding: 12px 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .warning {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    p {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 0.95rem;
+      color: #cfd8dc;
+    }
+
+    a {
+      color: #6c7ae0;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media(max-width: 480px){
+      .container {
+        padding: 30px 20px;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        padding: 10px 12px;
+      }
+
+      .btn {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Bank Signup</h2>
+
+    <!-- Dynamic Messages -->
+    {% if message %}
+      <div class="message {{ category }}">{{ message }}</div>
+    {% endif %}
+
+    <form action="/signup_form" method="post">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="pin">PIN</label>
+        <input type="number" id="pin" name="pin" placeholder="Set a PIN" required>
+      </div>
+
+      <div class="form-group">
+        <label for="balance">Initial Balance</label>
+        <input type="number" id="balance" name="balance" value="0" placeholder="Enter initial balance" required>
+      </div>
+
+      <button type="submit" class="btn">Create Account</button>
+    </form>
+
+    <p>Already have an account? <a href="/login">Login here</a></p>
+  </div>
+</body>
+</html>

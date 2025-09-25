@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bank - Login & Signup</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    }
+
+    .container {
+      position: relative;
+      width: 900px;
+      max-width: 100%;
+      height: 550px;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+      display: flex;
+    }
+
+    .form-container {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      transition: all 0.6s ease-in-out;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+      color: #203a43;
+    }
+
+    .form-container input {
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 100%;
+      outline: none;
+    }
+
+    .form-container input:focus {
+      border-color: #2c5364;
+    }
+
+    .form-container button {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #2c5364;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .form-container button:hover {
+      background: #203a43;
+    }
+
+    .signin-container {
+      left: 0;
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .signup-container {
+      left: 0;
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .container.active .signin-container {
+      transform: translateX(100%);
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .container.active .signup-container {
+      transform: translateX(100%);
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .overlay-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(135deg, #203a43, #2c5364);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px;
+      transition: transform 0.6s ease-in-out;
+    }
+
+    .container.active .overlay-container {
+      transform: translateX(-100%);
+    }
+
+    .overlay-container h2 {
+      margin-bottom: 15px;
+      font-size: 28px;
+    }
+
+    .overlay-container p {
+      margin-bottom: 20px;
+    }
+
+    .overlay-container button {
+      background: #fff;
+      color: #2c5364;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .overlay-container button:hover {
+      background: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="main-container">
+    
+    <!-- Signup Form -->
+    <div class="form-container signup-container">
+      <form action="/signup_form" method="post">
+        <h2>Create Account</h2>
+        <input type="text" name="name" placeholder="Full Name" required />
+        <input type="number" name="pin" placeholder="PIN" required />
+        <input type="number" name="balance" value="0" placeholder="Initial Balance" required />
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+
+    <!-- Signin Form -->
+    <div class="form-container signin-container">
+      <form action="/login_form" method="post">
+        <h2>Sign In</h2>
+        <input type="text" name="name" placeholder="Full Name" required />
+        <input type="number" name="pin" placeholder="PIN" required />
+        <button type="submit">Sign In</button>
+      </form>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay-container" id="overlay">
+      <div id="overlay-content">
+        <h2>Hello, Friend!</h2>
+        <p>Don't have an account? Sign up and start banking with us.</p>
+        <button id="signUpBtn">Sign Up</button>
+        <br>
+        <h2>Welcome Back!</h2>
+        <p>Already have an account? Sign in here.</p>
+        <button id="signInBtn">Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById('main-container');
+    const signUpBtn = document.getElementById('signUpBtn');
+    const signInBtn = document.getElementById('signInBtn');
+
+    signUpBtn.addEventListener('click', () => {
+      container.classList.remove("active");
+    });
+
+    signInBtn.addEventListener('click', () => {
+      container.classList.add("active");
+    });
+  </script>
+</body>
+</html>

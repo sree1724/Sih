@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroBank Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background: #0e0f1a; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, #1c1e2f, #1a1c2b);
+      display: flex;
+      flex-direction: column;
+      padding: 25px 20px;
+      gap: 25px;
+      position: fixed;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+    }
+    .sidebar h2 { font-size: 1.4rem; margin-bottom: 25px; color: #6c7ae0; }
+    .sidebar a { color: #fff; text-decoration: none; padding: 12px 15px; border-radius: 10px; display: flex; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; }
+    .sidebar a:hover, .sidebar .active { background: #2d2f6d; }
+    .sidebar .profile { text-align: center; margin-bottom: 20px; }
+    .sidebar .profile img { width: 70px; height: 70px; border-radius: 50%; margin-bottom: 10px; border: 2px solid #6c7ae0; }
+
+    /* Main content */
+    .main-content {
+      margin-left: 260px; /* leave space for fixed sidebar */
+      flex: 1;
+      padding: 25px 30px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden; /* prevent full page scroll */
+    }
+
+    .section {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+    }
+    .section.active { display: flex; }
+
+    /* Cards grid (fixed top) */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-gap: 25px;
+      flex-shrink: 0;
+    }
+    .card {
+      background: #1c1e2f;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+    .card h3 { font-size: 1.1rem; margin-bottom: 15px; color: #ccc; font-weight: 600; }
+    .card p { font-size: 1.7rem; font-weight: 700; margin-bottom: 15px; }
+    .chart-placeholder { height: 140px; background: linear-gradient(90deg, #2c306f, #6c7ae0); border-radius: 10px; }
+
+    /* Scrollable transactions */
+    .scrollable {
+      flex: 1;
+      overflow-y: auto;
+      margin-top: 20px;
+      padding-right: 5px;
+    }
+    /* Hide scrollbar while still scrollable */
+    .scrollable::-webkit-scrollbar { display: none; }
+    .scrollable { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .transactions { display: flex; flex-direction: column; gap: 12px; }
+    .transaction-item { display: flex; justify-content: space-between; padding: 12px 15px; background-color: #0e0f1a; border-radius: 10px; }
+    .transaction-item:hover { background-color: #1c1e2f; }
+    .transaction-item span { font-size: 0.95rem; color: #ccc; }
+    .transaction-item .amount { font-weight: 600; }
+
+    @media(max-width: 1024px){
+      .sidebar { width: 70px; padding: 15px 10px; }
+      .sidebar h2, .sidebar .profile img, .sidebar .profile p { display: none; }
+    }
+    @media(max-width: 480px){
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="profile">
+      <img src="/static/my_image1.jpg" alt="User Profile">
+      <p>Welcome, {{ user_id }}!</p>
+    </div>
+    <a class="active" data-section="dashboard">Dashboard</a>
+    <a data-section="accounts">Accounts</a>
+    <a data-section="transactions">Transactions</a>
+    <a data-section="transfer">Transfer</a>
+    <a data-section="reports">Reports</a>
+    <a data-section="investments">Investments</a>
+    <a data-section="loans">Loans</a>
+    <a href="/login">Logout</a>
+  </div>
+
+  <div class="main-content">
+    <!-- Dashboard Section -->
+    <div class="section active" id="dashboard">
+      <div class="cards-grid">
+        <div class="card"><h3>Balance Overview</h3><p>₹{{ balance }}</p><div class="chart-placeholder"></div></div>
+        <div class="card"><h3>Earnings</h3><p>₹95,623</p><div class="chart-placeholder"></div></div>
+        <div class="card"><h3>Spending</h3><p>₹107,489</p><div class="chart-placeholder"></div></div>
+      </div>
+      <div class="card scrollable">
+        <h3>Recent Transactions</h3>
+        <div class="transactions">
+          {% for t in transactions %}
+            <div class="transaction-item {{ t[4] }}">
+              <span>{{ t[1] if t[4]=='debit' else t[2] }}</span>
+              <span class="amount">₹{{ t[3] }}</span>
+              <span style="font-size:0.8rem; color:#aaa;">{{ t[5] }}</span>
+            </div>
+          {% else %}
+            <p>No transactions found</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Transfer Section -->
+    <div class="section" id="transfer">
+      <div class="card">
+        <h3>Transfer Money</h3>
+        {% if message %}
+          <div id="flash-message"
+               style="padding:10px; border-radius:8px; margin-bottom:15px;
+                      background-color: {{ 'green' if category=='success' else 'red' }};
+                      color:white;">
+            {{ message }}
+          </div>
+        {% endif %}
+        <form action="/transfer_form" method="post">
+          <input type="hidden" name="sender_id" value="{{ user_id }}">
+          <div style="margin-bottom:15px;">
+            <label for="receiver_id">Receiver</label>
+            <select name="receiver_id" id="receiver_id" required
+                    style="width:100%; padding:10px; border-radius:8px; background:#2a2c3f; color:#fff; border:none;">
+              {% for u in users %}
+                {% if u[0] != user_id %}
+                  <option value="{{ u[0] }}">{{ u[1] }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div style="margin-bottom:15px;">
+            <label for="amount">Amount</label>
+            <input type="number" step="0.01" min="0" name="amount" id="amount"
+                   placeholder="Enter amount" required
+                   style="width:100%; padding:10px; border-radius:8px; background:#2a2c3f; color:#fff; border:none;">
+          </div>
+          <button type="submit"
+                  style="width:100%; padding:12px; border-radius:10px; background:#6c7ae0; color:#fff; font-weight:600;">
+            Send Money
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Transactions Section -->
+    <div class="section" id="transactions">
+      <div class="card scrollable">
+        <h3>All Transactions</h3>
+        <div class="transactions">
+          {% for t in transactions %}
+            <div class="transaction-item {{ t[4] }}">
+              <span>{{ t[1] if t[4]=='debit' else t[2] }}</span>
+              <span class="amount">₹{{ t[3] }}</span>
+              <span style="font-size:0.8rem; color:#aaa;">{{ t[5] }}</span>
+            </div>
+          {% else %}
+            <p>No transactions found</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Section switching
+    const links = document.querySelectorAll('.sidebar a[data-section]');
+    const sections = document.querySelectorAll('.section');
+
+    links.forEach(link => {
+      link.addEventListener('click', () => {
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        const target = link.dataset.section;
+        sections.forEach(sec => sec.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+      });
+    });
+
+    // Auto-hide flash messages
+    setTimeout(() => {
+      const msg = document.getElementById("flash-message");
+      if (msg) {
+        msg.style.transition = "opacity 0.5s ease";
+        msg.style.opacity = "0";
+        setTimeout(() => msg.remove(), 500);
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
